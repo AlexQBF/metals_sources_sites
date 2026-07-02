@@ -1,0 +1,35 @@
+name: Metals Digest HYBRID (тест)
+
+on:
+  schedule:
+    # 14:01 UTC = 17:01 МСК, только будни. По понедельникам окно сбора 72ч.
+    - cron: "1 14 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-hybrid:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements_hybrid.txt
+      - name: Запустить гибридный бот
+        env:
+          TELEGRAM_BOT_TOKEN_SITES: ${{ secrets.TELEGRAM_BOT_TOKEN_SITES }}
+          TELEGRAM_CHAT_ID_SITES: ${{ secrets.TELEGRAM_CHAT_ID_SITES }}
+          AI_API_KEY: ${{ secrets.AI_API_KEY }}
+          AI_BASE_URL: ${{ secrets.AI_BASE_URL }}
+          AI_MODEL: ${{ secrets.AI_MODEL }}
+        run: python digest_hybrid.py
+      - name: Сохранить журналы (гибрид)
+        run: |
+          git config user.name "digest-bot"
+          git config user.email "bot@users.noreplymail.github.com"
+          git add sent_hybrid.json recent_digests_hybrid.json digests_hybrid/ 2>/dev/null || true
+          git commit -m "Обновление журналов (гибрид) $(date -u +%Y-%m-%d)" || echo "Нет изменений"
+          git push || echo "Нечего пушить"
