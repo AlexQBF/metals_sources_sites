@@ -321,7 +321,7 @@ def main():
     months = ["января","февраля","марта","апреля","мая","июня",
               "июля","августа","сентября","октября","ноября","декабря"]
     date_ru = f"{now_msk.day} {months[now_msk.month-1]} {now_msk.year}"
-    header = f"<b>🪙 AU &amp; AG — Главное за день · {date_ru}</b>\n\n"
+    header = f"<b>🪙 Главное за день · {date_ru}</b>\n\n"
 
     items, sent_ids = collect_all()
     recent = load_json(RECENT_DIGESTS_FILE, {"topics": []})
